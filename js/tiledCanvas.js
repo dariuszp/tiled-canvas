@@ -32,6 +32,7 @@ function TiledCanvas(container) {
         canvas.style.width = width + 'px';
         canvas.style.height = height + 'px';
         canvas.style.position = 'absolute';
+        canvas.style.padding = 0;
         canvas.style.left = dx + 'px';
         canvas.style.top = dy + 'px';
         canvas.style.zIndex = zIndex;
@@ -95,14 +96,14 @@ function TiledCanvas(container) {
         container.style.overflow = 'hidden';
 
         var tileSize = {
-                x: Math.ceil(container.offsetWidth / tileWidth),
-                y: Math.ceil(container.offsetHeight / tileHeight)
+                x: Math.ceil(container.clientWidth / tileWidth),
+                y: Math.ceil(container.clientHeight / tileHeight)
             },
             tiles = [],
             i = 0,
             j = 0,
-            limitI = tileSize.x - 1,
-            limitJ = tileSize.y - 1;
+            limitI = tileSize.x,
+            limitJ = tileSize.y;
 
         for (j = 0; j < limitJ; j++) {
             for (i = 0; i < limitI; i++) {
@@ -155,7 +156,7 @@ function TiledCanvas(container) {
         highestLayerIndex = 0;
 
 
-    this.addLayer = function (name, zIndex) {
+    this.addLayer = function (name, zIndex, tileWidth, tileHeight) {
         if (typeof name !== 'string' || name.length === 0) {
             throw new Error('Invalid name of the Layer: ' + name);
         }
@@ -175,7 +176,7 @@ function TiledCanvas(container) {
             }
         }
 
-        layers[name] = new Layer(container, name, zIndex, configuration.tile.width, configuration.tile.height);
+        layers[name] = new Layer(container, name, zIndex, (tileWidth === undefined) ? configuration.tile.width : tileWidth, (tileHeight === undefined) ? configuration.tile.height : tileHeight);
 
         return this;
     };
