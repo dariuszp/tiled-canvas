@@ -140,6 +140,19 @@ function TiledCanvas(container) {
                 }
             }
         };
+
+
+        this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
+            var tileStart = [0, 0],
+                tileStop = [0, 0];
+            if (dx === undefined && dy === undefined && dw === undefined && dh === undefined) {
+
+            } else {
+
+            }
+
+            //ctx.drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+        };
     }
 
     if ((container instanceof HTMLElement) === false) {
@@ -180,4 +193,8 @@ function TiledCanvas(container) {
 
         return this;
     };
+
+    this.getLayer = function (name) {
+        return ((layers[name] instanceof Layer) === false) ? layers : layer[name];
+    }
 }
