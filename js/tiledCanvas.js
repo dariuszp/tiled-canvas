@@ -46,6 +46,7 @@ function TiledCanvas(container) {
         canvas.style.zIndex = zIndex;
 
         this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
+            console.log(canvas);
             if (dx === undefined && dy === undefined && dw === undefined && dh === undefined) {
                 dx_or_sx -= canvasDx;
                 dy_or_sy -= canvasDy;
@@ -55,6 +56,8 @@ function TiledCanvas(container) {
                 dy -= canvasDy;
                 ctx.drawImage(img_elem, (dw_or_sw > img_elem.naturalWidth) ? img_elem.naturalWidth : dw_or_sw, (dh_or_sh > img_elem.naturalHeight) ? img_elem.naturalHeight : dh_or_sh, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
             }
+
+            return this;
         };
 
 
@@ -147,6 +150,8 @@ function TiledCanvas(container) {
                     container.removeChild(tiles[j][i]);
                 }
             }
+
+            return this;
         };
 
 
@@ -179,6 +184,8 @@ function TiledCanvas(container) {
                     }
                 }
             }
+
+            return this;
         };
     }
 
