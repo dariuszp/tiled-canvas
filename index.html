@@ -19,9 +19,14 @@
     "></div>
     <script type="text/javascript" src="./js/tiledCanvas.js"></script>
     <script type="text/javascript">
-        var view = document.getElementById('view');
-        var tc = new TiledCanvas(view);
-        tc.addLayer('default', 0, 200, 100);
+        var img = new Image();
+        img.src = './img/demo.png';
+        img.onload = function () {
+            var view = document.getElementById('view');
+            var tc = new TiledCanvas(view);
+            tc.addLayer('default', 0, 200, 100);
+            tc.getLayer('default').drawImage(img, 185, 270, 32, 48);
+        };
     </script>
 </body>
 </html>
