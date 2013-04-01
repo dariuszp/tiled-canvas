@@ -163,11 +163,69 @@ function TiledCanvas(container) {
         };
 
 
-        this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
+        this.getTilesToDraw = function (x, y, w, h) {
             var tileStart = [0, 0],
                 tileStop = [0, 0],
                 i = 0,
-                j = 0;
+                j = 0,
+                tilesToDraw = [];
+
+            tileStart = [
+                Math.floor(x / tileWidth),
+                Math.floor(y / tileHeight)
+            ];
+
+            tileStop = [
+                Math.floor((x + w) / tileWidth),
+                Math.floor((y + h) / tileHeight)
+            ];
+
+            switch (true) {
+            case (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]):
+                if (this.tileExist(tileStart[0], tileStart[1])) {
+                    tilesToDraw.push(tiles[tileStart[1]][tileStart[0]]);
+                }
+                break;
+            case (tileStart[0] === tileStop[0]):
+                for (i = tileStart[1]; i <= tileStop[1]; i++) {
+                    if (this.tileExist(tileStart[0], i)) {
+                        tilesToDraw.push(tiles[i][tileStart[0]]);
+                    }
+                }
+                break;
+            case (tileStart[1] === tileStop[1]):
+                for (i = tileStart[0]; i <= tileStop[0]; i++) {
+                    if (this.tileExist(i, tileStart[1])) {
+                        tilesToDraw.push(tiles[tileStart[1]][i]);
+                    }
+                }
+                break;
+            default:
+                for (j = tileStart[1]; j <= tileStop[1]; j++) {
+                    for (i = tileStart[0]; i <= tileStop[0]; i++) {
+                        if (this.tileExist(i, j)) {
+                            tilesToDraw.push(tiles[j][i]);
+                        }
+                    }
+                }
+            }
+
+            return tilesToDraw;
+        };
+
+
+        this.tileExist = function (x, y) {
+            if (tiles[y] !== undefined && (tiles[y][x] instanceof Tile) === true) {
+                return true;
+            }
+            return false;
+        };
+
+
+        this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
+            var tilesToDraw,
+                i = 0,
+                loopLimit = 0;
 
             if (dw_or_sw === undefined && dh_or_sh === undefined) {
                 dw_or_sw = img_elem.naturalWidth;
@@ -180,44 +238,19 @@ function TiledCanvas(container) {
                 dw_or_sw = parseInt(dw_or_sw, 10);
                 dh_or_sh = parseInt(dh_or_sh, 10);
 
-                tileStart = [
-                    Math.floor(dx_or_sx / tileWidth),
-                    Math.floor(dy_or_sy / tileHeight)
-                ];
-                tileStop = [
-                    Math.ceil((dx_or_sx + dw_or_sw) / tileWidth),
-                    Math.ceil((dy_or_sy + dh_or_sh) / tileHeight)
-                ];
+                tilesToDraw = this.getTilesToDraw(dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh);
             } else {
                 dx = parseInt(dx, 10);
                 dy = parseInt(dy, 10);
                 dw = parseInt(dw, 10);
                 dh = parseInt(dh, 10);
 
-                tileStart = [
-                    Math.floor(dx / tileWidth),
-                    Math.floor(dy / tileHeight)
-                ];
-                tileStop = [
-                    Math.floor((dx + dw) / tileWidth),
-                    Math.floor((dy + dh) / tileHeight)
-                ];
+                tilesToDraw = this.getTilesToDraw(dx, dy, dw, dh);
             }
 
-            if (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]) {
-                if ((tiles[tileStart[0]] !== undefined) && (tiles[tileStart[0]][tileStart[1]] instanceof Tile) === true) {
-                    //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'red');
-                    tiles[tileStart[0]][tileStart[1]].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
-                }
-            } else {
-                for (j = tileStart[1]; j < tileStop[1]; j++) {
-                    for (i = tileStart[0]; i < tileStop[0]; i++) {
-                        if ((tiles[j] !== undefined) && (tiles[j][i] instanceof Tile) === true) {
-                            //console.log(tiles[j][i].getCanvas().style.background = 'red');
-                            tiles[j][i].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
-                        }
-                    }
-                }
+            loopLimit = tilesToDraw.length;
+            for (i = 0; i < loopLimit; i++) {
+                tilesToDraw[i].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
             }
 
             return this;
@@ -225,34 +258,15 @@ function TiledCanvas(container) {
 
 
         this.clearRect = function (x, y, w, h) {
-            var tileStart = [0, 0],
-                tileStop = [0, 0],
+            var tilesToDraw,
                 i = 0,
-                j = 0;
+                loopLimit = 0;
 
-            tileStart = [
-                Math.floor(x / tileWidth),
-                Math.floor(y / tileHeight)
-            ];
-            tileStop = [
-                Math.floor((x + w) / tileWidth),
-                Math.floor((y + h) / tileHeight)
-            ];
+            tilesToDraw = this.getTilesToDraw(x, y, w, h);
 
-            if (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]) {
-                if ((tiles[tileStart[0]] !== undefined) && (tiles[tileStart[0]][tileStart[1]] instanceof Tile) === true) {
-                    //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'green');
-                    tiles[tileStart[0]][tileStart[1]].clearRect(x, y, w, h);
-                }
-            } else {
-                for (j = tileStart[1]; j < tileStop[1]; j++) {
-                    for (i = tileStart[0]; i < tileStop[0]; i++) {
-                        if ((tiles[j] !== undefined) && (tiles[j][i] instanceof Tile) === true) {
-                            //console.log(tiles[j][i].getCanvas().style.background = 'green');
-                            tiles[j][i].clearRect(x, y, w, h);
-                        }
-                    }
-                }
+            loopLimit = tilesToDraw.length;
+            for (i = 0; i < loopLimit; i++) {
+                tilesToDraw[i].clearRect(x, y, w, h);
             }
 
             return this;
