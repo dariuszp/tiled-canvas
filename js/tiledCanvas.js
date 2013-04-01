@@ -46,18 +46,26 @@ function TiledCanvas(container) {
         canvas.style.top = canvasDy + 'px';
         canvas.style.zIndex = zIndex;
 
+
         this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
             if (dx === undefined && dy === undefined && dw === undefined && dh === undefined) {
-                dx_or_sx -= canvasDx;
-                dy_or_sy -= canvasDy;
+                dx_or_sx -= Math.abs(canvasDx);
+                dy_or_sy -= Math.abs(canvasDy);
                 ctx.drawImage(img_elem, 0, 0, img_elem.naturalWidth, img_elem.naturalHeight, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh);
             } else {
-                dx -= canvasDx;
-                dy -= canvasDy;
+                dx -= Math.abs(canvasDx);
+                dy -= Math.abs(canvasDy);
                 ctx.drawImage(img_elem, (dw_or_sw > img_elem.naturalWidth) ? img_elem.naturalWidth : dw_or_sw, (dh_or_sh > img_elem.naturalHeight) ? img_elem.naturalHeight : dh_or_sh, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
             }
 
             return this;
+        };
+
+
+        this.clearRect = function (x, y, w, h) {
+            x -= Math.abs(canvasDx);
+            y -= Math.abs(canvasDy);
+            ctx.clearRect(x, y, w, h);
         };
 
 
@@ -191,8 +199,8 @@ function TiledCanvas(container) {
                     Math.floor(dy / tileHeight)
                 ];
                 tileStop = [
-                    Math.ceil((dx + dw) / tileWidth),
-                    Math.ceil((dy + dh) / tileHeight)
+                    Math.floor((dx + dw) / tileWidth),
+                    Math.floor((dy + dh) / tileHeight)
                 ];
             }
 
@@ -214,6 +222,42 @@ function TiledCanvas(container) {
 
             return this;
         };
+
+
+        this.clearRect = function (x, y, w, h) {
+            var tileStart = [0, 0],
+                tileStop = [0, 0],
+                i = 0,
+                j = 0;
+
+            tileStart = [
+                Math.floor(x / tileWidth),
+                Math.floor(y / tileHeight)
+            ];
+            tileStop = [
+                Math.floor((x + w) / tileWidth),
+                Math.floor((y + h) / tileHeight)
+            ];
+
+            if (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]) {
+                if ((tiles[tileStart[0]] !== undefined) && (tiles[tileStart[0]][tileStart[1]] instanceof Tile) === true) {
+                    //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'green');
+                    tiles[tileStart[0]][tileStart[1]].clearRect(x, y, w, h);
+                }
+            } else {
+                for (j = tileStart[1]; j < tileStop[1]; j++) {
+                    for (i = tileStart[0]; i < tileStop[0]; i++) {
+                        if ((tiles[j] !== undefined) && (tiles[j][i] instanceof Tile) === true) {
+                            //console.log(tiles[j][i].getCanvas().style.background = 'green');
+                            tiles[j][i].clearRect(x, y, w, h);
+                        }
+                    }
+                }
+            }
+
+            return this;
+        };
+
     }
 
     if ((container instanceof HTMLElement) === false) {
@@ -261,4 +305,13 @@ function TiledCanvas(container) {
         }
         latestLayer.drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
     };
+
+
+    this.clearRect = function (x, y, w, h) {
+        if ((latestLayer instanceof Layer) === false) {
+            throw new Error('No layers in this canvas, add at least one layer');
+        }
+        latestLayer.clearRect(x, y, w, h);
+    };
+
 }

@@ -26,6 +26,7 @@
             var tc = new TiledCanvas(view);
             tc.addLayer('default', 0, 200, 100);
             tc.getLayer('default').drawImage(img, 0, 0, 32, 48, 10, 10, 32, 48);
+            tc.getLayer('default').clearRect(25, 25, 20, 20);
         };
     </script>
 </body>
