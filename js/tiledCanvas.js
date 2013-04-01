@@ -12,7 +12,8 @@ function TiledCanvas(container) {
                 height: 100
             }
         },
-        highestLayerIndex = 0;
+        highestLayerIndex = 0,
+        latestLayer;
 
     function Tile(canvasDx, canvasDy, width, height, zIndex) {
         if ((this instanceof Tile) === false) {
@@ -46,11 +47,10 @@ function TiledCanvas(container) {
         canvas.style.zIndex = zIndex;
 
         this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
-            console.log(canvas);
             if (dx === undefined && dy === undefined && dw === undefined && dh === undefined) {
                 dx_or_sx -= canvasDx;
                 dy_or_sy -= canvasDy;
-                ctx.drawImage(img_elem, 0, 0, (dw_or_sw > img_elem.naturalWidth) ? img_elem.naturalWidth : dw_or_sw, (dh_or_sh > img_elem.naturalHeight) ? img_elem.naturalHeight : dh_or_sh, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh);
+                ctx.drawImage(img_elem, 0, 0, img_elem.naturalWidth, img_elem.naturalHeight, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh);
             } else {
                 dx -= canvasDx;
                 dy -= canvasDy;
@@ -161,11 +161,17 @@ function TiledCanvas(container) {
                 i = 0,
                 j = 0;
 
+            if (dw_or_sw === undefined && dh_or_sh === undefined) {
+                dw_or_sw = img_elem.naturalWidth;
+                dh_or_sh = img_elem.naturalHeight;
+            }
+
             if (dx === undefined && dy === undefined && dw === undefined && dh === undefined) {
-                if (dw_or_sw === undefined && dh_or_sh === undefined) {
-                    dw_or_sw = img_elem.clientWidth;
-                    dh_or_sh = img_elem.clientHeight;
-                }
+                dx_or_sx = parseInt(dx_or_sx, 10);
+                dy_or_sy = parseInt(dy_or_sy, 10);
+                dw_or_sw = parseInt(dw_or_sw, 10);
+                dh_or_sh = parseInt(dh_or_sh, 10);
+
                 tileStart = [
                     Math.floor(dx_or_sx / tileWidth),
                     Math.floor(dy_or_sy / tileHeight)
@@ -174,13 +180,32 @@ function TiledCanvas(container) {
                     Math.ceil((dx_or_sx + dw_or_sw) / tileWidth),
                     Math.ceil((dy_or_sy + dh_or_sh) / tileHeight)
                 ];
+            } else {
+                dx = parseInt(dx, 10);
+                dy = parseInt(dy, 10);
+                dw = parseInt(dw, 10);
+                dh = parseInt(dh, 10);
+
+                tileStart = [
+                    Math.floor(dx / tileWidth),
+                    Math.floor(dy / tileHeight)
+                ];
+                tileStop = [
+                    Math.ceil((dx + dw) / tileWidth),
+                    Math.ceil((dy + dh) / tileHeight)
+                ];
             }
 
-            for (j = tileStart[1]; j < tileStop[1]; j++) {
-                for (i = tileStart[0]; i < tileStop[0]; i++) {
-                    if ((tiles[j] !== undefined) && (tiles[j][i] instanceof Tile) === true) {
-                        //console.log(tiles[j][i].getCanvas().style.background = 'red');
-                        tiles[j][i].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+            if (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]) {
+                //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'red');
+                tiles[tileStart[0]][tileStart[1]].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+            } else {
+                for (j = tileStart[1]; j < tileStop[1]; j++) {
+                    for (i = tileStart[0]; i < tileStop[0]; i++) {
+                        if ((tiles[j] !== undefined) && (tiles[j][i] instanceof Tile) === true) {
+                            //console.log(tiles[j][i].getCanvas().style.background = 'red');
+                            tiles[j][i].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+                        }
                     }
                 }
             }
@@ -215,10 +240,23 @@ function TiledCanvas(container) {
 
         layers[name] = new Layer(container, name, zIndex, (tileWidth === undefined) ? configuration.tile.width : tileWidth, (tileHeight === undefined) ? configuration.tile.height : tileHeight);
 
+        if (zIndex === highestLayerIndex) {
+            latestLayer = layers[name];
+        }
+
         return this;
     };
 
+
     this.getLayer = function (name) {
         return ((layers[name] instanceof Layer) === false) ? layers : layers[name];
+    };
+
+
+    this.drawImage = function (img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh) {
+        if ((latestLayer instanceof Layer) === false) {
+            throw new Error('No layers in this canvas, add at least one layer');
+        }
+        latestLayer.drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
     };
 }
