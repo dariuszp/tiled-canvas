@@ -1,4 +1,4 @@
-function TiledCanvas(container) {
+function TiledCanvas(container, makeDefaultLayerTileWidth, makeDefaultLayerTileHeight, makeDefaultLayerTileZIndex) {
     'use strict';
 
     if ((this instanceof TiledCanvas) === false) {
@@ -274,10 +274,6 @@ function TiledCanvas(container) {
 
     }
 
-    if ((container instanceof HTMLElement) === false) {
-        throw new Error('Container must be an instance of HTMLElement');
-    }
-
     this.addLayer = function (name, zIndex, tileWidth, tileHeight) {
         if (typeof name !== 'string' || name.length === 0) {
             throw new Error('Invalid name of the Layer: ' + name);
@@ -328,4 +324,16 @@ function TiledCanvas(container) {
         latestLayer.clearRect(x, y, w, h);
     };
 
+
+    if ((container instanceof HTMLElement) === false) {
+        throw new Error('Container must be an instance of HTMLElement');
+    }
+
+    if (makeDefaultLayerTileWidth !== undefined && makeDefaultLayerTileHeight !== undefined) {
+        makeDefaultLayerTileWidth = parseInt(makeDefaultLayerTileWidth, 10);
+        makeDefaultLayerTileHeight = parseInt(makeDefaultLayerTileHeight, 10);
+        if (makeDefaultLayerTileWidth > 0 && makeDefaultLayerTileHeight > 0) {
+            this.addLayer('default', parseInt(makeDefaultLayerTileZIndex, 10), makeDefaultLayerTileWidth, makeDefaultLayerTileHeight);
+        }
+    }
 }
