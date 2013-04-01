@@ -8,8 +8,8 @@ function TiledCanvas(container, makeDefaultLayerTileWidth, makeDefaultLayerTileH
     var layers = {},
         configuration = {
             tile: {
-                width: 100,
-                height: 100
+                width: (parseInt(makeDefaultLayerTileWidth, 10) > 0) ? parseInt(makeDefaultLayerTileWidth, 10) : 100,
+                height: (parseInt(makeDefaultLayerTileHeight, 10) > 0) ? parseInt(makeDefaultLayerTileHeight, 10) : 100
             }
         },
         highestLayerIndex = 0,
