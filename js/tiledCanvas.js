@@ -197,8 +197,10 @@ function TiledCanvas(container) {
             }
 
             if (tileStart[0] === tileStop[0] && tileStart[1] === tileStop[1]) {
-                //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'red');
-                tiles[tileStart[0]][tileStart[1]].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+                if ((tiles[tileStart[0]] !== undefined) && (tiles[tileStart[0]][tileStart[1]] instanceof Tile) === true) {
+                    //console.log(tiles[tileStart[0]][tileStart[1]].getCanvas().style.background = 'red');
+                    tiles[tileStart[0]][tileStart[1]].drawImage(img_elem, dx_or_sx, dy_or_sy, dw_or_sw, dh_or_sh, dx, dy, dw, dh);
+                }
             } else {
                 for (j = tileStart[1]; j < tileStop[1]; j++) {
                     for (i = tileStart[0]; i < tileStop[0]; i++) {
