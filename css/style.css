@@ -1,0 +1,14 @@
+body {
+    background: #000;
+}
+
+#view {
+    width: 500px;
+    height: 500px;
+    border: 2px solid #00ff0c;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -251px -251px;
+    background: url("../img/body.png") 0 0 repeat;
+}

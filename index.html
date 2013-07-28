@@ -1,45 +1,39 @@
 <!doctype html>
 <html lang="en-US">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Tiled Canvas</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
-<body style="
-    background: #000;
-">
-    <div id="view" style="
-        width: 500px;
-        height: 500px;
-        border: 2px solid #00ff0c;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin: -251px -251px;
-        background: url('./img/body.png') 0 0 repeat;
-    "></div>
-    <script type="text/javascript" src="./js/tiledCanvas.js"></script>
+<body>
+    <div id="view"></div>
+
+    <script type="text/javascript" src="src/tiledCanvas.js"></script>
     <script type="text/javascript">
-        var img = new Image();
-        img.src = './img/demo.png';
-        img.onload = function () {
-            var view = document.getElementById('view'),
-                    tc = new TiledCanvas(view),
-                    x = 0,
-                    y = 0;
-            tc.addLayer('default', 0, 200, 100);
+        (function () {
+            var img = new Image();
+            img.src = './img/demo.png';
+            img.onload = function () {
+                var view = document.getElementById('view'),
+                        tc = new TiledCanvas(view),
+                        x,
+                        y = 0;
 
-            for(x = -40; x < 550; x += 32 ) {
-                for (y = -70; y < 550; y += 48) {
-                    tc.drawImage(img, 0, 0, 32, 48, x, y, 32, 48);
-                }
-            }
+                tc.addLayer('default', 0, 100, 100);
 
-            for(x = -40; x < 550; x += 19 ) {
-                for (y = -60; y < 550; y += 19) {
-                    tc.clearRect(x, y, 10, 10);
+                for(x = -40; x < 550; x += 32 ) {
+                    for (y = -70; y < 550; y += 48) {
+                        tc.drawImage(img, 0, 0, 32, 48, x, y, 32, 48);
+                    }
                 }
-            }
-        };
+
+                for(x = -40; x < 550; x += 19 ) {
+                    for (y = -60; y < 550; y += 19) {
+                        tc.clearRect(x, y, 10, 10);
+                    }
+                }
+            };
+        }());
     </script>
 </body>
 </html>
