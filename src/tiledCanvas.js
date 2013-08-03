@@ -116,6 +116,7 @@
              * @type {HTMLElement}
              */
             this.canvas = document.createElement('canvas');
+            this.canvas.className = "canvas-tile";
 
             /**
              * @type {CanvasRenderingContext2D}
@@ -140,12 +141,9 @@
             this.canvas.style = extendShallow(this.canvas.style, {
                 "width": this.width + 'px',
                 "height": this.height + 'px',
-                "position": "absolute",
-                "padding": 0,
                 "left": this.canvasDx + 'px',
                 "top": this.canvasDy + 'px',
-                "zIndex": this.zIndex,
-                "overflow": "hidden"
+                "zIndex": this.zIndex
             });
         }
 

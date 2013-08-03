@@ -12,3 +12,9 @@ body {
     margin: -251px -251px;
     background: url("../img/body.png") 0 0 repeat;
 }
+
+.canvas-tile {
+    position: absolute;
+    padding: 0;
+    overflow: hidden;
+}
