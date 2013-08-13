@@ -8,32 +8,9 @@
 <body>
     <div id="view"></div>
 
-    <script type="text/javascript" src="src/tiledCanvas.js"></script>
-    <script type="text/javascript">
-        (function () {
-            var img = new Image();
-            img.src = './img/demo.png';
-            img.onload = function () {
-                var view = document.getElementById('view'),
-                    tc = new TiledCanvas(view),
-                    x,
-                    y = 0;
-
-                tc.addLayer('default', 0, 100, 100);
-
-                for(x = -40; x < 550; x += 32 ) {
-                    for (y = -70; y < 550; y += 48) {
-                        tc.drawImage(img, 0, 0, 32, 48, x, y, 32, 48);
-                    }
-                }
-
-                for(x = -40; x < 550; x += 19 ) {
-                    for (y = -60; y < 550; y += 19) {
-                        tc.clearRect(x, y, 10, 10);
-                    }
-                }
-            };
-        }());
-    </script>
+    <script type="text/javascript" src="src/models/Layer.js"></script>
+    <script type="text/javascript" src="src/models/Tile.js"></script>
+    <script type="text/javascript" src="src/models/TiledCanvas.js"></script>
+    <script type="text/javascript" src="src/app.js"></script>
 </body>
 </html>
